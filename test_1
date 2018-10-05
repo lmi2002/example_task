@@ -1,0 +1,7 @@
+from sandbox import strTuple
+
+testresult = (86, 111, 118, 97)
+if strTuple("Vova") == testresult:
+    print 'Testing OK'
+else:
+    print 'Testing Failed'
