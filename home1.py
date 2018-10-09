@@ -17,7 +17,7 @@ class Stack:
             return 'Stack<{}>'.format(str(self.type)[7:-2])
 
     def _push(self, item):
-        if self.count() < self.limit:
+        if self.count() >= self.limit:
             raise LimitExceedError
 
         if not isinstance(item, self.data_type):
@@ -42,5 +42,3 @@ class Stack:
     @property
     def type(self):
         return self.data_type
-
-
