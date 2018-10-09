@@ -1,6 +1,7 @@
 class LimitExceedError(StandardError):
     pass
 
+
 class EmptyStackError(StandardError):
     pass
 
@@ -42,7 +43,4 @@ class Stack:
     def type(self):
         return self.data_type
 
-s = Stack(limit=2)
-
-print s.__str__()
 
