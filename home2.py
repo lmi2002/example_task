@@ -5,6 +5,11 @@ import shutil
 
 
 def info(fn):
+    """
+    Decorator that prints name of function and its processing time
+    :param fn: function to decorate
+    :return: None
+    """
     def wrapper(n):
         start = time.clock()
         fn(n)
@@ -15,8 +20,13 @@ def info(fn):
     return wrapper
 
 
-@info
+# @info
 def process(file):
+    """
+    Calculates sum of list elements
+    :param file: file that contain list
+    :return: sum of elements
+    """
     lst = json.loads(file.read())
     return sum(lst)
 
