@@ -12,15 +12,15 @@ def info(fn):
     """
     def wrapper(n):
         start = time.clock()
-        fn(n)
+        result = fn(n)
         print('function name: ', fn.__name__)
         end = time.clock()
         print('processing time: ', end-start)
-        return fn(n)
+        return result
     return wrapper
 
 
-# @info
+@info
 def process(file):
     """
     Calculates sum of list elements
@@ -44,8 +44,11 @@ def monitor(source, results, errors):
         for filename, file in kv_files.items():
             try:
                 result = process(file)
-                with open(os.path.join(results, filename), 'w') as result_file:
-                    result_file.write(str(result))
+                if not isinstance(result, Exception):
+                    with open(os.path.join(results, filename), 'w') as result_file:
+                        result_file.write(str(result))
+                else:
+                    raise Exception
             except Exception:
                 shutil.copy(os.path.join(source, filename), errors)
             finally:
