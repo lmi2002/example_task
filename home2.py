@@ -25,7 +25,7 @@ def process(file):
     """
     Calculates sum of list elements
     :param file: file that contain list
-    :return: sum of elements
+    :return: sum of list elements
     """
     lst = json.loads(file.read())
     return sum(lst)
@@ -33,7 +33,7 @@ def process(file):
 
 def check_dir(s, r, e):
     """
-    Check if all folders, using in monitoring function exist
+    Check if all folders, using by monitoring function exist
     :param s: folder with files to process
     :param r: folder with result files
     :param e: folder with files, leads to exceptions during processing
@@ -43,6 +43,13 @@ def check_dir(s, r, e):
 
 
 def monitor(source, results, errors):
+    """
+    Function monitor source folder, and process .txt files
+    :param source: folder with input data files which is under monitoring
+    :param results: folder which contain processing results
+    :param errors: folder with files which lead to errors during processing
+    :return: None
+    """
     if check_dir(source, results, errors):
         txt_filenames = [f for f in os.listdir(source) if f[-3:] == 'txt']
         txt_files = list(map(lambda x: open(os.path.join(source, x), 'r'),
@@ -56,8 +63,6 @@ def monitor(source, results, errors):
                     with open(os.path.join(results, filename), 'w') as \
                             result_file:
                         result_file.write(str(result))
-                else:
-                    raise Exception
             except Exception:
                 shutil.copy(os.path.join(source, filename), errors)
             finally:
