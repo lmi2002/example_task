@@ -1,6 +1,9 @@
 import xlrd
 import json
 import csv
+import pickle
+import datetime
+import re
 
 class FileConverter:
 
@@ -9,30 +12,28 @@ class FileConverter:
         self.book = xlrd.open_workbook(filename)
         self.sh = self.book.sheet_by_index(0)
 
-    @staticmethod
-    def read_xls(filename):
-        try:
-            book = xlrd.open_workbook(filename)
-        except FileNotFoundError:
-            print('File {} not found'.format(filename))
-            book = None
-        # else:
-            # print("The number of worksheets is {0}".format(book.nsheets))
-            # print("Worksheet name(s): {0}".format(book.sheet_names()))
-            # sh = book.sheet_by_index(0)
-            # print("{0} {1} {2}".format(sh.name, sh.nrows, sh.ncols))
-            # print("Cell D30 is {0}".format(sh.cell_value(rowx=29, colx=3)))
-            # for i in range(1, sh.nrows):
-            #     for j in range(sh.ncols):
-            #         print(sh.cell_value(rowx=i, colx=j))
-        return book
-
 
     def read_line(self, number):
         sh = self.book.sheet_by_index(0)
         line = []
-        for i in range(sh.ncols):
-            line.append(sh.cell_value(rowx=number, colx=i))
+        c0 = sh.cell(rowx=number, colx=0).value
+        c1 = sh.cell(rowx=number, colx=1).value
+        c2 = sh.cell(rowx=number, colx=2).value
+
+        try:
+            self.name_valid(c0)
+            line.append(c0)
+            self.email_valid(c1)
+            line.append(c1)
+            self.date_valid(c2)
+            c2 = datetime.datetime(*xlrd.xldate_as_tuple(c2, self.book.datemode)).date().isoformat()
+            c2 = datetime.datetime.strptime(c2, "%Y-%m-%d").strftime("%m/%d/%Y")
+            line.append(c2)
+        except Exception:
+            line = [c0, c1, c2]
+            if number:
+                with open('errors.log', 'a') as file:
+                    file.write(str(line)+'\n')
         return line
 
 
@@ -53,6 +54,35 @@ class FileConverter:
             for row in data:
                 csvwriter.writerow(row.values())
 
+        with open('output.bin', 'wb') as bfile:
+            pickle.dump(data, bfile)
+
+
+    @staticmethod
+    def date_valid(date):
+        try:
+            date = datetime.datetime.strptime(date, "%Y-%m-%d")
+        except Exception:
+            raise ValueError
+
+
+    @staticmethod
+    def email_valid(email):
+        reg = re.compile(r'^[A-Za-z0-9\.\+_]+@[A-Za-z0-9\._]+\.[a-zA-Z]*$')
+        if reg.match(email) is None or email.split('@')[1].count('.') > 2:
+            raise ValueError
+
+
+    @staticmethod
+    def name_valid(name):
+        reg = re.compile('^[a-zA-Z]+$')
+        if reg.match(name) is None:
+            raise ValueError
+
+
 
 f = FileConverter('Input.xlsx')
+# print(FileConverter.email_valid('vov_a@gmail.com'))
+# print(f.sh.cell(rowx=1, colx=1))
 f.write_data(f.convert_sheet())
+
