@@ -1,7 +1,9 @@
 import sys
+
+
 def inverse():
     """
-    To use function, rub the following command in console:
+    To use function, run the following command in console:
     $ python Task1.py <filename>
     :return: inverse file <filename>
     """
