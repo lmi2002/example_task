@@ -26,7 +26,12 @@ with open('output.json', 'r') as jfile:
     print('JSON test:', etalon_json == json.loads(jfile.read()))
 
 
-etalon_csv = [['banan', 'asdj@asfasd.xc.xc', '01/01/1997'], ['ann', 'ann@ukr.net', '10/29/1999']]
+etalon_csv = [
+    ['Username', 'Email', 'Joined'],
+    ['banan', 'asdj@asfasd.xc.xc', '01/01/1997'],
+    ['ann', 'ann@ukr.net', '10/29/1999']
+]
+
 actual_csv = []
 with open('output.csv', 'r') as cfile:
     cfile = csv.reader(cfile, delimiter=',')
