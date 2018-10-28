@@ -28,8 +28,10 @@ def process(file):
     :return: sum of list elements
     """
     lst = json.loads(file.read())
-    return sum(lst)
-
+    if isinstance(lst, list):
+        return sum(lst)
+    else:
+        raise ValueError
 
 def check_dir(s, r, e):
     """
@@ -69,3 +71,6 @@ def monitor(source, results, errors):
                 file.close()
                 if os.path.exists(os.path.join(source, filename)):
                     os.remove(os.path.join(source, filename))
+
+with open('Bad_file3.txt', 'r') as file:
+    process(file)
