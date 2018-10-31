@@ -1,10 +1,18 @@
+import re
+
 class Context:
+
+    # class __ContextIterator:
+    #     def __init__(self, context_instance):
+    #         self.context_instance_iter = context_instance.items().__iter__()
+    #
+    #     def __next__(self):
+    #         return dict((next(self.context_instance_iter),))
 
     context = {}
 
     def __init__(self, **kvargs):
         self.context.update(kvargs)
-
 
     def __str__(self):
         describe = "Class ("
@@ -14,6 +22,7 @@ class Context:
         return describe
 
     def __setattr__(self, key, value):
+        self.validate_name(key)
         self.context.update({key:value})
 
     def __getattr__(self, key):
@@ -22,11 +31,37 @@ class Context:
     def __len__(self):
         return len(self.context)
 
+    def __iter__(self):
+        # return self.__ContextIterator(self.context)
+        for key, value in self.context.items():
+            yield {key: value}
+
+    # def __next__(self):
+    #     for key, value in self.context.items():
+    #         yield {key: value}
+    #     # lst = list(self.context.items())
+    #     # lst_iter = iter(lst)
+    #     # return next(lst_iter)
+
+    @staticmethod
+    def validate_name(name):
+        reg = re.compile('^[a-zA-Z_]+[a-zA-Z_0-9]*$')
+        if not reg.match(name):
+            raise NameError('Wrong variable name')
 
 
-obj = Context(a=10, b=3)
+obj = Context(a=10, b=3, c='abc')
+
+iterator = iter(obj)
+# print (next(iterator))
+# print (next(iterator))
 
 
-print(obj.context)
-print(obj)
-print(len(obj))
+
+for item in obj:
+    print(item)
+
+
+# print(obj.context)
+# print(obj)
+# print(len(obj))
