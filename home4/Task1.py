@@ -1,24 +1,26 @@
 import re
 
+class ValidationError(Exception):
+    """
+    Self defined exception, used in RealComplex class.
+    Raises when trying to add neither complex nor real type attribute.
+    """
+    pass
 class Context:
-
-    # class __ContextIterator:
-    #     def __init__(self, context_instance):
-    #         self.context_instance_iter = context_instance.items().__iter__()
-    #
-    #     def __next__(self):
-    #         return dict((next(self.context_instance_iter),))
 
     context = {}
 
-    def __init__(self, **kvargs):
-        self.context.update(kvargs)
+    def __init__(self, **kwargs):
+        for key, value in kwargs.items():
+            self.validate_name(key)
+        self.context.update(kwargs)
 
     def __str__(self):
         describe = "Class ("
         for keys, values in self.context.items():
             describe += '{key} = {value}, '.format(key=keys, value=values)
-        describe = describe[:-2] + ')'
+        describe = describe[:-2] + ')' if self.context.items() else\
+            describe + (')')
         return describe
 
     def __setattr__(self, key, value):
@@ -32,20 +34,8 @@ class Context:
         return len(self.context)
 
     def __iter__(self):
-        # return self.__ContextIterator(self.context)
-        # self.count = 0
         for key, value in self.context.items():
             yield {key: value}
-
-    # def __next__(self):
-    #     lst = list(self.context.iteritems())
-    #     if self.count < len(lst):
-    #         i = self.count
-    #         self.count += 1
-    #         return lst[i]
-    #     else:
-    #         raise StopIteration
-
 
     @staticmethod
     def validate_name(name):
@@ -54,18 +44,76 @@ class Context:
             raise NameError('Wrong variable name')
 
 
-obj = Context(a=10, b=3, c='abc')
+class RealContext(Context):
 
-iterator = iter(obj)
-print (next(iterator))
-print (next(iterator))
+    def __init__(self, **kwargs):
+        Context.__init__(self, **kwargs)
+        for key, value in self.context.items():
+            self.validate_type(value)
+        self.context.update(kwargs)
+
+    def __setattr__(self, key, value):
+        Context.__setattr__(self, key, value)
+        self.validate_type(value)
+        self.context.update({key:value})
+
+    @staticmethod
+    def validate_type(name):
+        if not (isinstance(name, int) or isinstance(name, float)):
+            raise TypeError ('Wrong variable type')
 
 
+class ComplexContext(Context):
 
-# for item in obj:
-#     print(item)
+    def __init__(self, **kwargs):
+        Context.__init__(self, **kwargs)
+        for key, value in self.context.items():
+            self.validate_type(value)
+        self.context.update(kwargs)
+
+    def __setattr__(self, key, value):
+        Context.__setattr__(self, key, value)
+        self.validate_type(value)
+        self.context.update({key: value})
+
+    @staticmethod
+    def validate_type(name):
+        if not isinstance(name, complex):
+            raise TypeError('Wrong variable type')
 
 
+class NumberContext(RealContext, ComplexContext):
+
+    def __init__(self, **kwargs):
+        Context.__init__(self, **kwargs)
+        for key, value in self.context.items():
+            self.validate_type(value)
+        self.context.update(kwargs)
+
+    def __setattr__(self, key, value):
+        Context.__setattr__(self, key, value)
+        self.validate_type(value)
+        self.context.update({key: value})
+
+    @staticmethod
+    def validate_type(value):
+        if isinstance(RealContext.validate_type(value), TypeError) and \
+                isinstance(ComplexContext.validate_type(value), TypeError):
+            raise ValidationError('Variable type neither real nor complex')
+
+# obj = Context(a=10, b=3, c='abc')
+# obj = RealContext(a=10, b=3, c=1)
+obj = ComplexContext()
+# obj = NumberContext()
+obj.a = 1+1j
+print(obj)
+
+# obj.d = 'ggg'
+# iterator = iter(obj)
+#
+# print(next(iterator))
+# print(next(iterator))
+#
 # print(obj.context)
 # print(obj)
 # print(len(obj))
