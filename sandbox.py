@@ -2,6 +2,7 @@ import time
 import json
 import pickle
 import csv
+import keyword
 
 def str_tuple(st):
     lst = []
@@ -95,5 +96,72 @@ def process(string):
         file.close()
     return internal
 
-items = [1, 2, 3, 4, 5]
-squared = list(map(lambda x: x**2, items))
+
+class Language:
+    _words = []
+    def lexicon(self):
+        return self._words
+
+
+class Proglanguage(Language):
+    _keywords = []
+    def lexicon(self):
+        return self._keywords
+
+
+class Python(Proglanguage):
+    _keywords = keyword.kwlist
+
+#
+# p = Python()
+# print(p.lexicon())
+
+print('Start')
+
+class A:
+
+    def __init__(self):
+
+        print('Constructor A')
+
+class B(A):
+
+    def __init__(self):
+        super(B, self).__init__()
+    #     # A.__init__(self,a)
+    #     # self.context.append(2)
+        print('Constructor B')
+
+class C(B):
+    def __init__(self):
+        super(C, self).__init__()
+        #     # A.__init__(self,a)
+        #     # self.context.append(2)
+        print('Constructor C')
+
+class D(B):
+    def __init__(self):
+        super(D, self).__init__()
+        #     # A.__init__(self,a)
+        #     # self.context.append(2)
+        print('Constructor D')
+
+    def zzz(self):
+        print('I am D')
+    pass
+
+class E(C):
+    def __int__(self):
+        print('int E')
+        self.zzz()
+
+e = E()
+
+
+# b = B([1])
+
+# print(b.context)
+
+
+
+
