@@ -9,7 +9,6 @@ class ValidationError(Exception):
     """
     pass
 
-
 class NumberBaseContext:
     """
     Abstract interface class
@@ -35,7 +34,6 @@ class Context:
     Stores context of variables and their values as dictionary
     """
 
-
     def __init__(self, **kwargs):
         """
         Class constructor
@@ -44,6 +42,9 @@ class Context:
         """
         self.__dict__['context'] = {}
         for key, value in kwargs.items():
+            reg = re.compile('^[a-zA-Z_]+[a-zA-Z_0-9]*$')
+            if not reg.match(key):
+                raise NameError('Wrong variable name')
             self.validate_name(key)
         self.context.update(kwargs)
 
@@ -66,7 +67,9 @@ class Context:
         :param value: variable value
         :return: None
         """
-        self.validate_name(key)
+        reg = re.compile('^[a-zA-Z_]+[a-zA-Z_0-9]*$')
+        if not reg.match(key):
+            raise NameError('Wrong variable name')
         self.context.update({key:value})
 
     def __getattr__(self, key):
@@ -95,13 +98,9 @@ class Context:
     @staticmethod
     def validate_name(name):
         """
-        Context item name validator
-        :param name: variable name
-        :return: raises error if name is invalid python lexeme
+        Context item name validator stub
+        :return: True
         """
-        reg = re.compile('^[a-zA-Z_]+[a-zA-Z_0-9]*$')
-        if not reg.match(name):
-            raise NameError('Wrong variable name')
 
 
 class RealContext(Context):
@@ -132,6 +131,7 @@ class RealContext(Context):
         :param name: value for validation
         :return: raises TypeError if value neither float nor int
         """
+        print('RealContext validation call')
         if not (isinstance(name, int) or isinstance(name, float)):
             raise TypeError ('Wrong variable type (Neither int nor float)')
 
@@ -157,13 +157,14 @@ class ComplexContext(Context):
         self.validate_type(value)
         self.context.update({key: value})
 
-    # @staticmethod
-    def validate_type(self,name):
+    @staticmethod
+    def validate_type(name):
         """
         Context item type validator
         :param name: value for validation
         :return: raises TypeError if value in not complex
         """
+        print('ComplexContext validation call')
         if not isinstance(name, complex):
             raise TypeError('Wrong variable type (Not Complex)')
 
@@ -197,9 +198,10 @@ class NumberContext(NumberBaseContext, RealContext, ComplexContext):
         :return: raises ValidationError if value is other then 
                 int, float, complex
         """
+        print('NumberContext validation call')
         err_count = 0
         try:
-            validate_type(value)
+            RealContext.validate_type(value)
         except TypeError:
             err_count += 1
         try:
@@ -209,33 +211,3 @@ class NumberContext(NumberBaseContext, RealContext, ComplexContext):
         if err_count == 2:
             raise ValidationError('Variable type neither real nor complex')
 
-
-
-# obj = Context(a=10, b=3, c='abc')
-# obj = RealContext(a=10, b=3, c=1)
-# obj = ComplexContext()
-# obj = NumberContext()
-# obj.a = 1+1j
-# obj.b = 1.0
-obj = Context()
-obj.a = 10
-
-obj2 = Context()
-obj2.b = 20
-
-print (obj2)
-
-
-
-# obj2 = Context(a=2)
-# print(obj2)
-
-# obj.d = 'ggg'
-# iterator = iter(obj)
-#
-# print(next(iterator))
-# print(next(iterator))
-#
-# print(obj.context)
-# print(obj)
-# print(len(obj))
