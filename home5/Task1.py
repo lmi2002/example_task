@@ -6,24 +6,42 @@ def validate_name(name):
         raise NameError('Wrong variable name')
 
 
-def validate_str(str):
-    inp = str.split('=')
-    validate_name(inp[0])
-    return {inp[0]: inp[1]}
+def validate_input(str):
+        try:
+            inp = str.split('=')
+            validate_name(inp[0])
+            return {inp[0]: inp[1]}
+        except:
+            raise TypeError('Wrong input format')
+
+class CustomMetaclass(type):
+    def __new__(cls, classname, bases, params):
+        return type.__new__(cls, classname, bases, params)
+
+    def __str__(cls):
+        # describe = 'Class <{}>:'.format(cls.__name__)
+        print('XXX')
+        # return describe
+
+
 
 def main():
-    cls = input('Classname = ')
-    dct = {}
+    classname = input('Classname = ')
+    params = {}
     while True:
         a = input('Set up class items ')
         if a != '':
             try:
-                dct.update(validate_str(a))
-            except NameError:
-                pass
+                params.update(validate_input(a))
+            except Exception:
+                print('Input class properties in a=x format')
         else:
             break
-    print(dct)
+
+    Myclass = CustomMetaclass(classname, (), params)
+
+    obj = Myclass()
+    print (obj)
 
 
 if __name__== "__main__":
