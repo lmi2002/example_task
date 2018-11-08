@@ -8,8 +8,9 @@ def validate_name(name):
 
 def validate_input(str):
         try:
-            inp = str.split('=')
+            inp = ''.join([x for x in list(str) if x != ' ']).split('=')
             validate_name(inp[0])
+
             return {inp[0]: inp[1]}
         except:
             raise TypeError('Wrong input format')
@@ -26,7 +27,7 @@ def validate_input(str):
 
 def output(self):
     describe = 'Class <{}>:\n'.format(self.__class__.__name__)
-    params='\n'.join(['{key} = {value}'.format(key=k, value=v) for k,v in self.__class__.__dict__.items() if not k.startswith('__')])
+    params='\n'.join(['{key} = {value} type={t}'.format(key=k, value=v, t=type(v)) for k,v in self.__class__.__dict__.items() if not k.startswith('__')])
     return describe + params
 
 def main():
@@ -44,15 +45,9 @@ def main():
 
     params.update({'__str__': output})
     Myclass = type(classname, (), params)
-    print(Myclass())
+    a = Myclass()
+    print(a)
 
 
 if __name__== "__main__":
     main()
-
-
-# print({k: v for k, v in Vova.__dict__.items() if not k.startswith('__')})
-
-# for key, value in v.__class__.__dict__.items():
-# # for key, value in v.__dict__.items():
-#     print('{} = {}'.format(key, value))
