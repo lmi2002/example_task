@@ -14,16 +14,20 @@ def validate_input(str):
         except:
             raise TypeError('Wrong input format')
 
-class CustomMetaclass(type):
-    def __new__(cls, classname, bases, params):
-        return type.__new__(cls, classname, bases, params)
+# class CustomMetaclass(type):
+#
+#     def __new__(cls, classname, bases, params):
+#         return type.__new__(cls, classname, bases, params)
+#
+#     def __str__(cls):
+#         # describe = 'Class <{}>:'.format(cls.__name__)
+#         print('XXX')
+#         # return describe
 
-    def __str__(cls):
-        # describe = 'Class <{}>:'.format(cls.__name__)
-        print('XXX')
-        # return describe
-
-
+def output(self):
+    describe = 'Class <{}>:\n'.format(self.__class__.__name__)
+    params='\n'.join(['{key} = {value}'.format(key=k, value=v) for k,v in self.__class__.__dict__.items() if not k.startswith('__')])
+    return describe + params
 
 def main():
     classname = input('Classname = ')
@@ -38,11 +42,17 @@ def main():
         else:
             break
 
-    Myclass = CustomMetaclass(classname, (), params)
-
-    obj = Myclass()
-    print (obj)
+    params.update({'__str__': output})
+    Myclass = type(classname, (), params)
+    print(Myclass())
 
 
 if __name__== "__main__":
-  main()
+    main()
+
+
+# print({k: v for k, v in Vova.__dict__.items() if not k.startswith('__')})
+
+# for key, value in v.__class__.__dict__.items():
+# # for key, value in v.__dict__.items():
+#     print('{} = {}'.format(key, value))
