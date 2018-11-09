@@ -1,5 +1,4 @@
-from .Task2 import *
-
+from Task2 import *
 
 class A(metaclass=Const):
     x = 1
@@ -15,10 +14,13 @@ class TestClass:
         except Exception as e:
             assert isinstance(e, ConstAttributeError)
 
+    def test_set_obj_attr(self):
+        a = A()
+        a.x = 100
+        assert a.x == 100
 
-
-#
-# A.y=1
-# a = A()
-#
-# a.x=1
+    def test_change_obj_attr(self):
+        a = A()
+        a.x = 100
+        a.x = 200
+        assert a.x == 200
