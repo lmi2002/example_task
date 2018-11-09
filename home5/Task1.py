@@ -60,14 +60,14 @@ def validate_name(name):
         raise NameError('Wrong variable name')
 
 
-def validate_input(str):
+def validate_input(string):
     """
     Validate user input.
-    :param str: String if format name=value, where name is variable name, value - its value
+    :param string: String if format name=value, where name is variable name, value - its value
     :return: dictionary item {name: value} if input format is correct. Raise TypeError otherwise
     """
     try:
-        inp = ''.join([x for x in list(str) if x != ' ']).split('=')
+        inp = ''.join([x for x in list(string) if x != ' ']).split('=')
         validate_name(inp[0])
         return {inp[0]: TypeValidator(inp[1])()}
     except:
@@ -102,7 +102,6 @@ def main():
     Myclass = type(classname, (), params)
     a = Myclass()
     print(a)
-
 
 if __name__== "__main__":
     main()
